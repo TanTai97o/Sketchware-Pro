@@ -40,7 +40,7 @@ public class IconExtendedFloatingActionButton extends IconBase {
         viewBean.layout.paddingRight = 8;
         viewBean.layout.paddingBottom = 8;
         viewBean.layout.backgroundColor = 0xFF9C27B0;
-        viewBean.text.text = "ExtendedFloatingActionButton";
+        viewBean.text.text = getWidgetName();
         viewBean.text.textColor = 0xFFFFFFFF;
         viewBean.convert = "com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton";
         viewBean.inject = "app:icon=\"@drawable/default_image\"\napp:iconTint=\"#FFFFFF\"\napp:iconSize=\"24dp\"";

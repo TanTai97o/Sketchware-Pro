@@ -58,15 +58,46 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tv_build_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:visibility="gone"
+                    android:text="Building..."/>
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressIndicator"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    app:trackCornerRadius="4dp"
+                    android:indeterminate="true"/>
+
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/layout_btn_group"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
+                    android:layout_margin="8dp"
                     android:background="?attr/colorSurface"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp">
+
+
+
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -89,21 +120,26 @@
                             android:layout_height="36dp" />
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/btn_compiler_opt"
-                        style="?materialIconButtonFilledStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="8dp"
-                        app:icon="@drawable/sorting_options_48" />
+                        <Button
+                            android:id="@+id/btn_compiler_opt"
+                            style="@style/Widget.Material3.Button.TextButton.Icon"
+                            android:layout_width="45dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="8dp"
+                            android:text=" "
+                            app:icon="@drawable/sorting_options_48" />
 
-                    <Button
+                    <ImageView
                         android:id="@+id/btn_execute"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="35dp"
+                        app:tint="#F44336"
+                        android:scaleType="fitCenter"
+                        android:padding="6dp"
+                        android:layout_height="35dp"
                         android:layout_marginEnd="8dp"
-                        tools:text="@string/common_word_run" />
-                </LinearLayout>
+                        android:src="@drawable/ic_mtrl_circle_play" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
             <com.besome.sketch.editor.view.ViewProperty

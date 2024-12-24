@@ -12,8 +12,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="14dp"
         android:paddingHorizontal="4dp"
-        android:text="@string/local_library_manager_enter_dependency"
-        android:textAppearance="?attr/textAppearanceTitleLargeEmphasized" />
+        android:text="@string/local_library_manager_enter_dependency" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dependencyInputLayout"

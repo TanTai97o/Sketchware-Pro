@@ -47,8 +47,13 @@ public class IconCustomWidget extends IconBase {
                 layoutBean.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 viewBean.layout.orientation = VERTICAL;
                 break;
-            case 3, 13, 4, 11, 19, 41:
-                viewBean.text.text = Title;
+            case 3, 13, 4, 11, 19, 41, 49, 50:
+                int name = viewBean.type;
+                if (name == 49) {
+                    viewBean.text.text = "Material Switch";
+                } else {
+                    viewBean.text.text = Title;
+                }
                 break;
             case 5:
                 viewBean.text.hint = Title;

@@ -45,9 +45,8 @@
         <activity
             android:name="com.besome.sketch.common.SrcViewerActivity"
             android:configChanges="orientation|screenSize" />
-
         <activity
-            android:name="pro.sketchware.activities.importicon.ImportIconActivity"
+            android:name=".activities.importicon.ImportIconActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name="com.besome.sketch.help.LicenseActivity" />
@@ -71,7 +70,6 @@
         <activity
             android:name="com.besome.sketch.projects.MyProjectSettingActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-
         <activity android:name="com.besome.sketch.tools.CompileLogActivity" />
         <activity android:name="com.besome.sketch.tools.CollectErrorActivity" />
         <activity
@@ -85,7 +83,7 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.SketchwarePro.SmallToolbar" />
         <activity
-            android:name="pro.sketchware.activities.main.activities.MainActivity"
+            android:name=".activities.main.activities.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:theme="@style/Theme.SketchwarePro.Starting">
@@ -272,19 +270,10 @@
             android:name="mod.hilal.saif.activities.tools.ConfigActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name="mod.hilal.saif.activities.tools.EventsMaker"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name="mod.hilal.saif.activities.tools.EventsMakerCreator"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name="mod.hilal.saif.activities.tools.EventsMakerDetails"
-            android:configChanges="orientation|screenSize" />
-        <activity
             android:name="mod.hilal.saif.activities.tools.AppSettings"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name="pro.sketchware.activities.about.AboutActivity"
+            android:name=".activities.about.AboutActivity"
             android:configChanges="orientation|screenSize" />
         <activity android:name="mod.jbk.editor.manage.library.ExcludeBuiltInLibrariesActivity" />
         <activity
@@ -295,39 +284,31 @@
         <activity
             android:name="mod.khaled.logcat.LogReaderActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <activity android:name="pro.sketchware.activities.main.fragments.projects_store.ProjectPreviewActivity"
+        <activity
+            android:name=".activities.main.fragments.projects_store.ProjectPreviewActivity"
             android:configChanges="orientation|screenSize" />
-
-        <activity android:name="pro.sketchware.activities.coloreditor.ColorEditorActivity" />
-        
-        <activity android:name="pro.sketchware.activities.settings.SettingsActivity" />
-        
+        <activity android:name=".activities.coloreditor.ColorEditorActivity" />
+        <activity android:name=".activities.settings.SettingsActivity" />
         <activity
             android:name=".activities.appcompat.ManageAppCompatActivity"
             android:configChanges="orientation|screenSize" />
-
-        <activity android:name="mod.bobur.StringEditorActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan"/>
-
+        <activity
+            android:name="mod.bobur.StringEditorActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activities.editor.command.ManageXMLCommandActivity"
             android:configChanges="orientation|screenSize" />
-
         <activity
             android:name=".activities.editor.component.ManageCustomComponentActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name=".activities.editor.component.AddCustomComponentActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".activities.editor.view.ViewCodeEditorActivity"
             android:configChanges="orientation|screenSize" />
-
         <activity
             android:name=".activities.preview.LayoutPreviewActivity"
             android:configChanges="orientation|screenSize" />

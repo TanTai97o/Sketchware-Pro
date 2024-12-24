@@ -269,12 +269,8 @@ public class Ox {
         XmlBuilder widgetTag = convert.isEmpty() ? new XmlBuilder(viewBean.getClassInfo().a()) :
                 new XmlBuilder(convert.replaceAll(" ", ""));
         if (convert.equals("include")) {
-            if (!toNotAdd.contains("layout")) {
+            if (!toNotAdd.contains("layout") && !injectHandler.contains("layout")) {
                 widgetTag.addAttribute("", "layout", "@layout/" + viewBean.id);
-            }
-
-            if (!toNotAdd.contains("android:id")  && !injectHandler.contains("id")) {
-                widgetTag.addAttribute("android", "id", "@+id/" + viewBean.id);
             }
         } else {
             if (!toNotAdd.contains("android:id")) {
@@ -289,7 +285,6 @@ public class Ox {
                     case ViewBean.VIEW_TYPE_WIDGET_PROGRESSBAR:
                     case ViewBean.VIEW_TYPE_WIDGET_CHECKBOX:
                     case ViewBean.VIEW_TYPE_WIDGET_SWITCH:
-                    case ViewBeans.VIEW_TYPE_WIDGET_MATERIALSWITCH:
                     case ViewBean.VIEW_TYPE_WIDGET_SEEKBAR:
                     case ViewBean.VIEW_TYPE_WIDGET_CALENDARVIEW:
                     case ViewBeans.VIEW_TYPE_WIDGET_RADIOBUTTON:
@@ -341,7 +336,7 @@ public class Ox {
             }
         }
         if (viewBean.getClassInfo().a("LinearLayout") &&
-                !widgetTag.c().matches("(BottomAppBar|NavigationView|Coordinator|Floating|Extended|Collaps|include)\\w*")) {
+                !widgetTag.c().matches("(BottomAppBar|NavigationView|Coordinator|Floating|Collaps|include)\\w*")) {
             if (!toNotAdd.contains("android:orientation") && !injectHandler.contains("orientation")) {
                 int orientation = viewBean.layout.orientation;
                 if (orientation == LinearLayout.HORIZONTAL) {
@@ -357,9 +352,6 @@ public class Ox {
                     widgetTag.addAttribute("android", "weightSum", String.valueOf(weightSum));
                 }
             }
-        }
-        if (viewBean.getClassInfo().a("ExtendedFloatingActionButton")) {
-            writeTextExtendedFloatingButtonAttributes(widgetTag, viewBean);
         }
         if (viewBean.getClassInfo().a("TextView")) {
             writeViewGravity(widgetTag, viewBean);
@@ -414,7 +406,7 @@ public class Ox {
         if (!viewBean.inject.isEmpty()) {
             widgetTag.addAttributeValue(viewBean.inject.replaceAll(" ", ""));
         }
-        
+
         if (!viewBean.parentAttributes.isEmpty()) {
             viewBean.parentAttributes.forEach((key, value) -> {
                 String[] parts = key.split(":");
@@ -515,7 +507,7 @@ public class Ox {
         String resName = viewBean.image.resName;
         if (!resName.isEmpty() && !"NONE".equals(resName)) {
             String value = "@drawable/" + resName.toLowerCase();
-            if (nx.c().equals("FloatingActionButton") ||  nx.c.equals("ExtendedFloatingActionButton")) {
+            if (nx.c().equals("FloatingActionButton")) {
                 if (!toNotAdd.contains("app:srcCompat") && !injectHandler.contains("srcCompat")) {
                     nx.addAttribute("app", "srcCompat", value);
                 }
@@ -708,18 +700,6 @@ public class Ox {
             nx.addAttribute("android", "paddingBottom", paddingBottom + "dp");
         }
     }
-    private void writeTextExtendedFloatingButtonAttributes(XmlBuilder nx, ViewBean viewBean) {
-        var injectHandler = new InjectAttributeHandler(viewBean);
-        Set<String> toNotAdd = readAttributesToReplace(viewBean);
-        String text = viewBean.text.text;
-        if (text != null && !text.isEmpty() && !toNotAdd.contains("android:text") && !injectHandler.contains("text")) {
-            if (text.startsWith("@")) {
-                nx.addAttribute("android", "text", text);
-            } else {
-                nx.addAttribute("android", "text", escapeXML(text));
-            }
-        }
-    }
 
     private void writeTextAttributes(XmlBuilder nx, ViewBean viewBean) {
         var injectHandler = new InjectAttributeHandler(viewBean);
@@ -852,7 +832,6 @@ public class Ox {
         switch (viewBean.type) {
             case ViewBean.VIEW_TYPE_WIDGET_CHECKBOX:
             case ViewBean.VIEW_TYPE_WIDGET_SWITCH:
-            case ViewBeans.VIEW_TYPE_WIDGET_MATERIALSWITCH:
             case ViewBeans.VIEW_TYPE_WIDGET_RADIOBUTTON:
                 if (viewBean.checked == 1 && !toNotAdd.contains("android:checked") && !injectHandler.contains("checked")) {
                     nx.addAttribute("android", "checked", "true");

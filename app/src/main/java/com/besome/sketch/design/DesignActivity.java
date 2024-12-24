@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -57,6 +58,7 @@ import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.besome.sketch.lib.ui.CustomViewPager;
 import com.besome.sketch.tools.CompileLogActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.topjohnwu.superuser.Shell;
@@ -107,6 +109,7 @@ import mod.hey.studios.project.proguard.ManageProguardActivity;
 import mod.hey.studios.project.proguard.ProguardHandler;
 import mod.hey.studios.project.stringfog.ManageStringFogFragment;
 import mod.hey.studios.project.stringfog.StringfogHandler;
+import mod.hey.studios.util.CompileLogHelper;
 import mod.hey.studios.util.Helper;
 import mod.hey.studios.util.SystemLogPrinter;
 import mod.hilal.saif.activities.android_manifest.AndroidManifestInjection;
@@ -119,6 +122,7 @@ import mod.jbk.diagnostic.CompileErrorSaver;
 import mod.jbk.diagnostic.MissingFileException;
 import mod.jbk.util.LogUtil;
 import mod.khaled.logcat.LogReaderActivity;
+import pro.sketchware.databinding.LogBinding;
 import pro.sketchware.utility.ThemeUtils;
 import pro.sketchware.R;
 import pro.sketchware.activities.appcompat.ManageAppCompatActivity;
@@ -141,7 +145,9 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
     private DB r;
     private DB t;
     private Button buildSettings;
-    private Button runProject;
+    private TextView tvBuildStatus;
+    private LinearProgressIndicator progressIndicator;
+    private ImageView runProject;
     private ProjectFileSelector projectFileSelector;
     private final ActivityResultLauncher<Intent> openImageManager = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
@@ -239,18 +245,38 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
      */
     private void indicateCompileErrorOccurred(String error) {
         new CompileErrorSaver(sc_id).writeLogsToFile(error);
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Show compile log", Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction(Helper.getResString(R.string.common_word_show), v -> {
-            if (!mB.a()) {
-                snackbar.dismiss();
+        CompileErrorSaver compileErrorSaver = new CompileErrorSaver(sc_id);
+
+        runOnUiThread(() -> {
+            aB dialog = new aB(DesignActivity.this);
+            dialog.b("Build failed");
+            dialog.a(R.drawable.ic_mtrl_warning);
+            dialog.a("Compile Log");
+            LogBinding binding = LogBinding.inflate(getLayoutInflater());
+            dialog.a(binding.getRoot());
+            binding.tvCompileLog.setText(CompileLogHelper.getColoredLogs(this, error));
+            binding.tvCompileLog.setTextIsSelectable(true);
+
+            dialog.b("Show compile log", v -> {
                 Intent intent = new Intent(getApplicationContext(), CompileLogActivity.class);
                 intent.putExtra("error", error);
                 intent.putExtra("sc_id", sc_id);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-            }
+            });
+            dialog.a("Clear log", v -> {
+                dialog.dismiss();
+                if (compileErrorSaver.logFileExists()) {
+                    compileErrorSaver.deleteSavedLogs();
+                    getIntent().removeExtra("error");
+                    SketchwareUtil.toast("Compile logs have been cleared.");
+                } else {
+                    SketchwareUtil.toast("No compile logs found.");
+                }
+            });
+            dialog.configureDefaultButton("Close", Helper.getDialogDismissListener(dialog));
+            dialog.show();
         });
-        snackbar.show();
     }
 
     @Override
@@ -443,9 +469,10 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         coordinatorLayout = findViewById(R.id.layout_coordinator);
         buildSettings = findViewById(R.id.btn_compiler_opt);
+        progressIndicator = findViewById(R.id.progressIndicator);
+        tvBuildStatus = findViewById(R.id.tv_build_status);
         buildSettings.setOnClickListener(this);
         runProject = findViewById(R.id.btn_execute);
-        runProject.setText(Helper.getResString(R.string.common_word_run));
         runProject.setOnClickListener(this);
         xmlLayoutOrientation = findViewById(R.id.img_orientation);
         projectFileSelector = findViewById(R.id.file_selector);
@@ -1021,7 +1048,10 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
             if (activity == null) return;
 
             activity.runOnUiThread(() -> {
-                activity.runProject.setText("Buiding...");
+                activity.runProject.setImageResource(R.drawable.ic_mtrl_circle_pause);
+                activity.runProject.setColorFilter(0xFF4CAF50);
+                activity.progressIndicator.setVisibility(View.VISIBLE);
+                activity.tvBuildStatus.setVisibility(View.VISIBLE);
                 activity.runProject.setClickable(false);
                 activity.r.a("P1I10", true);
                 activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -1029,7 +1059,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 if (activity.isBuildingInTheBackground()) {
                     maybeShowNotification();
                 } else {
-                    maybeShowDialog();
+                   // maybeShowDialog();
                     dialog.setIsCancelableOnBackPressed(false);
                 }
             });
@@ -1043,6 +1073,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 var q = activity.q;
                 var sc_id = DesignActivity.sc_id;
                 onProgress("Deleting temporary files...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Deleting temporary files..."));
                 FileUtil.deleteFile(q.projectMyscPath);
 
                 q.c(activity.getApplicationContext());
@@ -1064,6 +1095,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 }
                 
                 onProgress("Generating source code...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Generating source code..."));
                 kC kC = jC.d(sc_id);
                 kC.b(q.resDirectoryPath + File.separator + "drawable-xhdpi");
                 kC = jC.d(sc_id);
@@ -1088,18 +1120,21 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 }
 
                 onProgress("Extracting built-in libraries...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Extracting built-in libraries..."));
                 BuiltInLibraries.extractCompileAssets(this);
                 if (canceled) {
                     return;
                 }
 
                 onProgress("AAPT2 is running...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("AAPT2 is running..."));
                 builder.compileResources();
                 if (canceled) {
                     return;
                 }
 
                 onProgress("Generating view binding...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Generating view binding..."));
                 builder.generateViewBinding();
                 if (canceled) {
                     return;
@@ -1111,6 +1146,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 }
 
                 onProgress("Java is compiling...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Java is compiling..."));
                 builder.compileJavaCode();
                 if (canceled) {
                     return;
@@ -1135,18 +1171,21 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 }
 
                 onProgress("Merging DEX files...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Merging DEX files..."));
                 builder.getDexFilesReady();
                 if (canceled) {
                     return;
                 }
 
                 onProgress("Building APK...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Building APK..."));
                 builder.buildApk();
                 if (canceled) {
                     return;
                 }
 
                 onProgress("Signing APK...");
+                activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Signing APK..."));
                 builder.signDebugApk();
                 if (canceled) {
                     return;
@@ -1224,7 +1263,10 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                             dialog.dismiss();
                         }
                     }
-                    activity.runProject.setText(Helper.getResString(R.string.common_word_run));
+                    activity.runProject.setImageResource(R.drawable.ic_mtrl_circle_play);
+                    activity.runProject.setColorFilter(0xFFF44336);
+                    activity.progressIndicator.setVisibility(View.GONE);
+                    activity.tvBuildStatus.setVisibility(View.GONE);
                     activity.runProject.setClickable(true);
                     activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 }
@@ -1251,8 +1293,10 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                                 canceled = true;
                             }
                             dialog.show();
-                            activity.runProject.setText("Canceling build...");
+                            activity.runProject.setImageResource(R.drawable.ic_mtrl_circle_play);
+                            activity.runProject.setColorFilter(0xFFF44336);
                             onProgress("Canceling build...");
+                            activity.runOnUiThread(() -> activity.tvBuildStatus.setText("Canceling build..."));
                         }
                         cancelDialog.dismiss();
                     });
@@ -1280,7 +1324,10 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
             DesignActivity activity = getActivity();
             if (activity != null) {
                 activity.runOnUiThread(() -> {
-                    activity.runProject.setText(Helper.getResString(R.string.common_word_run));
+                    activity.runProject.setImageResource(R.drawable.ic_mtrl_circle_play);
+                    activity.runProject.setColorFilter(0xFFF44336);
+                    activity.progressIndicator.setVisibility(View.GONE);
+                    activity.tvBuildStatus.setVisibility(View.GONE);
                     activity.runProject.setClickable(true);
                     activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 });

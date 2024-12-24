@@ -82,41 +82,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:id="@+id/container"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_marginRight="8dp"
-            android:id="@+id/searchBlocks"
-            android:layout_marginLeft="25dp"
-            android:layout_weight="1"
-            app:boxCornerRadiusTopStart="25dp"
-            app:boxCornerRadiusBottomStart="25dp"
-            app:boxCornerRadiusBottomEnd="25dp"
-            app:boxCornerRadiusTopEnd="25dp"
-            app:startIconDrawable="@drawable/ic_mtrl_search"
-            app:startIconContentDescription="@string/search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:id="@+id/inputText"
-                android:singleLine="true"
-                android:layout_height="wrap_content"
-                android:hint="@string/search"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                style="@style/Widget.Material3.Button.Icon"
-                android:layout_width="50dp"
-                android:id="@+id/more_button"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                app:icon="@drawable/ic_mtrl_more_vertical" />
-        </LinearLayout>
         <TextView
             android:id="@+id/paletteCount"
             android:layout_width="wrap_content"
@@ -130,12 +95,9 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="18sp" />
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/paletteRecycler"
+            android:id="@+id/list_pallete"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingBottom="8dp"
+            android:layout_height="wrap_content"
             tools:listitem="@layout/pallet_customview" />
     </LinearLayout>
 

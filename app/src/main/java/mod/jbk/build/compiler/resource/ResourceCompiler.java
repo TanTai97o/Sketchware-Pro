@@ -42,7 +42,6 @@ public class ResourceCompiler {
     private final File aaptFile;
     private final BuildProgressReceiver progressReceiver;
     private final ProjectBuilder builder;
-
     public ResourceCompiler(ProjectBuilder builder, File aapt, boolean willBuildAppBundle, BuildProgressReceiver receiver) {
         this.willBuildAppBundle = willBuildAppBundle;
         aaptFile = aapt;

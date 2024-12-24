@@ -471,8 +471,8 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
             case "41": // MaterialButton
                 prioritizedSuggestions.addAll(Arrays.asList(
                         "Button", "com.google.android.material.button.MaterialButton",
-                        "ImageButton", "ToggleButton", "CompoundButton",
-                        "androidx.appcompat.widget.AppCompatButton"
+                        "ImageButton", "ToggleButton", "CompoundButton", "com.google.android.material.materialswitch.MaterialSwitch",
+                        "androidx.appcompat.widget.AppCompatButton", "com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton"
                 ));
                 break;
             case "4":  // TextView
