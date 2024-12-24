@@ -29,14 +29,14 @@ android {
         //noinspection ExpiredTargetSdkVersion since we don't target getting Sketchware Pro on Google Play.
         targetSdkVersion 28
         versionCode 150
-        versionName "v7.0.0-BETASNAPSHOT-" + getCommitHash()
+        versionName "v7.0.0-SNAPSHOT-" + getCommitHash()
 
         buildConfigField("String", "GIT_HASH", "\"${gitCommitHash}\"")
 
-        buildConfigField("String", "FLAVOR_NAME_WITH_AABS", "\"minApi26AAB\"")
+        buildConfigField("String", "FLAVOR_NAME_WITH_AABS", "\"minApi26\"")
         buildConfigField("String", "FLAVOR_NAME_WITHOUT_AABS", "\"minApi21\"")
 
-        buildConfigField("String", "VERSION_NAME_WITHOUT_FLAVOR", "\"v7.0.0-BETASNAPSHOT-${getCommitHash()}\"")
+        buildConfigField("String", "VERSION_NAME_WITHOUT_FLAVOR", "\"v7.0.0-SNAPSHOT-${getCommitHash()}\"")
 
         buildConfigField("String", "SKETCHUB_API_KEY", "\"${System.getenv("SKETCHUB_API_KEY")}\"")
     }
@@ -46,7 +46,7 @@ android {
         minApi26 {
             dimension "api"
             minSdkVersion 26
-            versionNameSuffix "-minApi26AAB"
+            versionNameSuffix "-minApi26"
             isDefault = true
         }
 
@@ -114,7 +114,7 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.viewpager:viewpager:1.0.0"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-    implementation "com.google.android.material:material:1.13.0-alpha08"
+    implementation "com.google.android.material:material:1.12.0"
     implementation "com.airbnb.android:lottie:6.5.2"
     implementation "com.google.android.flexbox:flexbox:3.0.0"
 
