@@ -57,7 +57,10 @@ import com.besome.sketch.editor.view.ProjectFileSelector;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.besome.sketch.lib.ui.CustomViewPager;
 import com.besome.sketch.tools.CompileLogActivity;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -144,8 +147,11 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
     private yq q;
     private DB r;
     private DB t;
+    private MaterialCardView appbarBase;
+    private FloatingActionButton settingsFab;
     private Button buildSettings;
     private TextView tvBuildStatus;
+    private BottomAppBar bottomAppBar;
     private LinearProgressIndicator progressIndicator;
     private ImageView runProject;
     private ProjectFileSelector projectFileSelector;
@@ -352,6 +358,18 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
+        } else if (currentBuildTask != null) {
+            aB dialog = new aB(this);
+            dialog.b("Cancel build");
+            dialog.a("Are you sure you want to cancel the build?");
+            dialog.b("Cancel Build", v -> {
+                currentBuildTask.cancelBuild();
+                currentBuildTask = null;
+            });
+            dialog.a("Keep Building", v -> {
+
+            });
+            dialog.show();
         } else if (viewTabAdapter.g()) {
             viewTabAdapter.a(false);
         } else {
@@ -365,6 +383,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 showSaveBeforeQuittingDialog();
             }
         }
+
     }
 
     private void saveChangesAndCloseProject() {
@@ -379,6 +398,61 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         projectSaver.execute();
     }
 
+    private boolean handleMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.clean_file:
+                new Thread(() -> {
+                    FileUtil.deleteFile(q.projectMyscPath);
+                    runOnUiThread(() ->
+                            SketchwareUtil.toast("Done cleaning temporary files!"));
+                }).start();
+                return true;
+            case R.id.source_code:
+                showCurrentActivitySrcCode();
+                return true;
+            case R.id.more:
+                PopupMenu popupMenu = new PopupMenu(this, buildSettings);
+                Menu menu = popupMenu.getMenu();
+                var isViewTab = viewPager.getCurrentItem() == 0;
+                menu.add(Menu.NONE, 1, Menu.NONE, "Show last compile error");
+                if (FileUtil.isExistFile(q.finalToInstallApkPath)) {
+                    menu.add(Menu.NONE, 2, Menu.NONE, "Install last built APK");
+                    menu.add(Menu.NONE, 3, Menu.NONE, "Show Apk signatures");
+                }
+                if (isViewTab) {
+                    menu.add(Menu.NONE, 4, Menu.NONE, "Direct XML editor");
+                }
+                popupMenu.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case 1 -> new CompileErrorSaver(sc_id).showLastErrors(this);
+                        case 2 -> {
+                            if (FileUtil.isExistFile(q.finalToInstallApkPath)) {
+                                installBuiltApk();
+                            } else {
+                                SketchwareUtil.toast("APK doesn't exist anymore");
+                            }
+                        }
+                        case 3 -> {
+                            ApkSignatures apkSignatures = new ApkSignatures(this, q.finalToInstallApkPath);
+                            apkSignatures.showSignaturesDialog();
+                        }
+                        case 4 -> {
+                            toViewCodeEditor();
+                        }
+                        default -> {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+                popupMenu.show();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+
     @Override
     public void onClick(View v) {
         if (!mB.a()) {
@@ -386,56 +460,15 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 BuildTask buildTask = new BuildTask(this);
                 currentBuildTask = buildTask;
                 buildTask.execute();
+            } else if (v.getId() == R.id.settingsFab) {
+                new BuildSettingsDialog(this, sc_id).show();
             } else if (v.getId() == R.id.btn_compiler_opt) {
-                PopupMenu popupMenu = new PopupMenu(this, buildSettings);
-                Menu menu = popupMenu.getMenu();
-
-                var isViewTab = viewPager.getCurrentItem() == 0;
-                menu.add(Menu.NONE, 1, Menu.NONE, "Build Settings");
-                menu.add(Menu.NONE, 2, Menu.NONE, "Clean temporary files");
-                menu.add(Menu.NONE, 3, Menu.NONE, "Show last compile error");
-                menu.add(Menu.NONE, 5, Menu.NONE, "Show source code");
-                if (FileUtil.isExistFile(q.finalToInstallApkPath)) {
-                    menu.add(Menu.NONE, 4, Menu.NONE, "Install last built APK");
-                    menu.add(Menu.NONE, 6, Menu.NONE, "Show Apk signatures");
-                }
-                if (isViewTab) {
-                    menu.add(Menu.NONE, 7, Menu.NONE, "Direct XML editor");
+                if(appbarBase.VISIBLE == appbarBase.getVisibility()) {
+                    appbarBase.setVisibility(View.GONE);
+                } else {
+                    appbarBase.setVisibility(View.VISIBLE);
                 }
 
-                popupMenu.setOnMenuItemClickListener(item -> {
-                    switch (item.getItemId()) {
-                        case 1 -> new BuildSettingsDialog(this, sc_id).show();
-                        case 2 -> new Thread(() -> {
-                            FileUtil.deleteFile(q.projectMyscPath);
-                            runOnUiThread(() ->
-                                    SketchwareUtil.toast("Done cleaning temporary files!"));
-                        }).start();
-                        case 3 -> new CompileErrorSaver(sc_id).showLastErrors(this);
-                        case 4 -> {
-                            if (FileUtil.isExistFile(q.finalToInstallApkPath)) {
-                                installBuiltApk();
-                            } else {
-                                SketchwareUtil.toast("APK doesn't exist anymore");
-                            }
-                        }
-                        case 5 -> showCurrentActivitySrcCode();
-                        case 6 -> {
-                            ApkSignatures apkSignatures = new ApkSignatures(this, q.finalToInstallApkPath);
-                            apkSignatures.showSignaturesDialog();
-                        }
-                        case 7 -> {
-                            toViewCodeEditor();
-                        }
-                        default -> {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                });
-
-                popupMenu.show();
             }
         }
     }
@@ -471,6 +504,11 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         buildSettings = findViewById(R.id.btn_compiler_opt);
         progressIndicator = findViewById(R.id.progressIndicator);
         tvBuildStatus = findViewById(R.id.tv_build_status);
+        appbarBase = findViewById(R.id.appbarBase);
+        bottomAppBar = findViewById(R.id.bottomAppBar);
+        settingsFab = findViewById(R.id.settingsFab);
+        settingsFab.setOnClickListener(this);
+        bottomAppBar.setOnMenuItemClickListener(menuItem -> handleMenuItemClick(menuItem));
         buildSettings.setOnClickListener(this);
         runProject = findViewById(R.id.btn_execute);
         runProject.setOnClickListener(this);

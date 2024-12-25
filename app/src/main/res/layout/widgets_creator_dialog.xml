@@ -26,6 +26,7 @@
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/TextDropDownLayoutStyle"
             android:id="@+id/input_name"
@@ -89,6 +90,5 @@
                 android:maxLines="10"
                 android:minHeight="48dp" />
         </com.google.android.material.textfield.TextInputLayout>
-
     </LinearLayout>
 </ScrollView>

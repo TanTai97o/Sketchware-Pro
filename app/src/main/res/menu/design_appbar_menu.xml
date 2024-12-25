@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/clean_file"
+        android:icon="@drawable/ic_mtrl_delete"
+        android:title="Clean temporary files"
+        android:contentDescription="Clean temporary files"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/source_code"
+        android:icon="@drawable/ic_mtrl_code"
+        android:title="Show source code"
+        android:contentDescription="Show source code"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/more"
+        android:icon="@drawable/ic_mtrl_more_vertical"
+        android:title="More"
+        android:contentDescription="More"
+        app:showAsAction="ifRoom"/>
+</menu>

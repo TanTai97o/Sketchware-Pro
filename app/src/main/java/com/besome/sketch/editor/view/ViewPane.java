@@ -147,7 +147,7 @@ public class ViewPane extends RelativeLayout {
     }
 
     private void initialize() {
-        context = new ContextThemeWrapper(getContext(), R.style.ThemeOverlay_SketchwarePro_ViewEditor);
+        context = new ContextThemeWrapper(getContext(), R.style.Theme_Material3_DayNight);
         svgUtils = new SvgUtils(context);
         svgUtils.initImageLoader();
         setBackgroundColor(Color.WHITE);
